@@ -19,30 +19,28 @@
       position: relative;
       width: 1200px;
       height: 600px;
-      box-shadow: 0 0 40px rgba(0,0,0,0.8);
+      box-shadow: 0 0 50px rgba(0,0,0,0.9);
     }
     canvas {
       display: block;
       background: #111;
-      border: 3px solid #333;
+      border: 3px solid #222;
     }
 
-    /* ========== UI EN JEU ========== */
+    /* UI en jeu */
     #ui {
       position: absolute;
-      top: 12px;
-      left: 15px;
-      font-size: 17px;
+      top: 12px; left: 15px;
+      font-size: 16px;
       text-shadow: 2px 2px 4px #000;
       pointer-events: none;
       z-index: 10;
     }
     #highscore {
       position: absolute;
-      top: 12px;
-      right: 15px;
+      top: 12px; right: 15px;
       color: #ffd700;
-      font-size: 15px;
+      font-size: 14px;
       text-align: right;
       text-shadow: 2px 2px 4px #000;
       pointer-events: none;
@@ -50,211 +48,256 @@
     }
     #gamepadInfo {
       position: absolute;
-      bottom: 8px;
-      left: 12px;
-      color: #888;
+      bottom: 8px; left: 12px;
+      color: #777;
       font-size: 13px;
       pointer-events: none;
       z-index: 10;
     }
-    #pauseIndicator {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 48px;
-      color: #fff;
-      text-shadow: 0 0 20px #000;
-      display: none;
-      z-index: 20;
-      pointer-events: none;
-    }
 
-    /* ========== NOUVEAU MENU PRINCIPAL ========== */
+    /* ========== MENU PRINCIPAL ========== */
     #mainMenu {
       position: absolute;
       inset: 0;
-      background: linear-gradient(160deg, #0a0a12 0%, #12121f 40%, #0d1a1f 100%);
+      background: linear-gradient(145deg, #0b0b14, #12121f 50%, #0a1520);
       display: flex;
       z-index: 100;
     }
     #mainMenu.hidden { display: none; }
 
     .menu-left {
-      width: 55%;
+      width: 50%;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding-left: 80px;
+      padding-left: 70px;
     }
     .menu-right {
-      width: 45%;
-      background: linear-gradient(to left, rgba(0,0,0,0.4), transparent);
+      width: 50%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
+      background: linear-gradient(to left, rgba(0,0,0,0.35), transparent);
     }
 
     .game-title {
-      font-size: 56px;
+      font-size: 54px;
       font-weight: 800;
-      letter-spacing: 4px;
+      letter-spacing: 3px;
+      line-height: 1.05;
       color: #fff;
-      line-height: 1.1;
-      margin-bottom: 8px;
     }
     .game-title span {
       color: #00ff9d;
-      text-shadow: 0 0 25px rgba(0,255,157,0.5);
+      text-shadow: 0 0 30px rgba(0,255,157,0.45);
     }
     .game-subtitle {
-      font-size: 18px;
-      color: #888;
-      margin-bottom: 50px;
+      font-size: 16px;
+      color: #777;
+      margin: 12px 0 40px;
       letter-spacing: 2px;
     }
 
     .menu-btn {
-      width: 260px;
-      padding: 16px 24px;
-      font-size: 18px;
+      width: 270px;
+      padding: 15px 22px;
+      font-size: 17px;
       font-weight: 600;
       border: 2px solid #333;
       background: rgba(255,255,255,0.03);
-      color: #ddd;
+      color: #ccc;
       cursor: pointer;
-      transition: all 0.25s;
+      transition: all 0.22s;
       text-align: left;
-      position: relative;
-      overflow: hidden;
     }
     .menu-btn:hover {
       border-color: #00ff9d;
-      background: rgba(0,255,157,0.08);
       color: #fff;
-      transform: translateX(8px);
+      background: rgba(0,255,157,0.08);
+      transform: translateX(6px);
     }
     .menu-btn.primary {
       border-color: #00ff9d;
-      background: rgba(0,255,157,0.12);
       color: #00ff9d;
+      background: rgba(0,255,157,0.1);
     }
     .menu-btn.primary:hover {
       background: #00ff9d;
       color: #000;
     }
-    .menu-btn::before {
-      content: attr(data-num);
-      position: absolute;
-      right: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 13px;
-      color: #555;
-    }
 
-    /* ========== ÉCRANS SECONDAIRES ========== */
-    .sub-screen {
+    /* ========== ÉCRAN CONFIGURATION ========== */
+    #configScreen {
       position: absolute;
       inset: 0;
-      background: #0a0a12;
+      background: #0b0b14;
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 110;
-      padding: 40px;
     }
-    .sub-screen.active { display: flex; }
+    #configScreen.active { display: flex; }
 
-    .sub-screen h2 {
-      font-size: 36px;
+    #configScreen h2 {
+      font-size: 32px;
       color: #00ff9d;
-      margin-bottom: 30px;
+      margin-bottom: 35px;
       letter-spacing: 2px;
     }
-    .record-box {
+
+    .config-group {
       width: 420px;
-      max-height: 300px;
-      overflow-y: auto;
+      margin-bottom: 28px;
+      background: rgba(255,255,255,0.04);
+      padding: 20px 25px;
+      border-radius: 8px;
+      border-left: 4px solid #00ff9d;
+    }
+    .config-group label {
+      display: block;
+      font-size: 15px;
+      color: #aaa;
+      margin-bottom: 12px;
+    }
+    .config-options {
+      display: flex;
+      gap: 12px;
+    }
+    .config-options button {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #333;
+      background: transparent;
+      color: #ccc;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      border-radius: 6px;
+    }
+    .config-options button.active {
+      border-color: #00ff9d;
+      background: rgba(0,255,157,0.15);
+      color: #00ff9d;
+    }
+    .config-options button:hover {
+      border-color: #00ff9d;
+    }
+
+    .config-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .config-actions button {
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+    .btn-start {
+      background: #00ff9d;
+      color: #000;
+    }
+    .btn-start:hover { background: #00e68a; }
+    .btn-back {
+      background: #333;
+      color: #ccc;
+    }
+    .btn-back:hover { background: #444; }
+
+    /* Écrans secondaires (Records, Contrôles...) */
+    .sub-screen {
+      position: absolute;
+      inset: 0;
+      background: #0b0b14;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 110;
+    }
+    .sub-screen.active { display: flex; }
+    .sub-screen h2 {
+      font-size: 32px;
+      color: #00ff9d;
       margin-bottom: 25px;
+    }
+    .record-box {
+      width: 400px;
+      max-height: 280px;
+      overflow-y: auto;
+      margin-bottom: 20px;
     }
     .record-line {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 18px;
-      margin: 6px 0;
+      padding: 11px 16px;
+      margin: 5px 0;
       background: rgba(255,255,255,0.04);
       border-left: 3px solid #00ff9d;
-      font-size: 17px;
+      font-size: 16px;
     }
     .del-btn {
       background: transparent;
       border: 1px solid #c0392b;
       color: #c0392b;
-      width: 30px;
-      height: 30px;
+      width: 28px; height: 28px;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 14px;
     }
     .del-btn:hover { background: #c0392b; color: #fff; }
-
     .back-btn {
-      margin-top: 20px;
-      width: 200px;
-      padding: 12px;
+      margin-top: 15px;
+      padding: 12px 40px;
       background: transparent;
-      border: 2px solid #555;
+      border: 2px solid #444;
       color: #aaa;
-      font-size: 16px;
+      font-size: 15px;
       cursor: pointer;
-      transition: 0.2s;
     }
-    .back-btn:hover {
-      border-color: #00ff9d;
-      color: #00ff9d;
-    }
-
+    .back-btn:hover { border-color: #00ff9d; color: #00ff9d; }
     .info-box {
       background: rgba(255,255,255,0.04);
-      padding: 25px 40px;
-      border-radius: 6px;
-      line-height: 1.8;
-      font-size: 16px;
-      text-align: left;
-      max-width: 480px;
+      padding: 22px 35px;
+      border-radius: 8px;
+      line-height: 1.75;
+      font-size: 15px;
+      max-width: 460px;
     }
     .info-box strong { color: #00ff9d; }
 
-    /* ========== MENU PAUSE ========== */
+    /* Menu Pause */
     #pauseMenu {
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.82);
+      background: rgba(0,0,0,0.85);
       display: none;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 50;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(5px);
     }
     #pauseMenu.active { display: flex; }
-
     #pauseMenu h2 {
-      font-size: 48px;
+      font-size: 46px;
       color: #fff;
-      margin-bottom: 40px;
-      letter-spacing: 6px;
+      margin-bottom: 35px;
+      letter-spacing: 5px;
     }
     .pause-btn {
-      width: 240px;
+      width: 230px;
       padding: 14px;
       margin: 8px 0;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 600;
       border: 2px solid #444;
       background: rgba(255,255,255,0.05);
@@ -265,7 +308,6 @@
     .pause-btn:hover {
       border-color: #00ff9d;
       color: #00ff9d;
-      background: rgba(0,255,157,0.1);
     }
   </style>
 </head>
@@ -273,56 +315,82 @@
   <div id="gameContainer">
     <canvas id="gameCanvas" width="1200" height="600"></canvas>
 
-    <!-- UI -->
     <div id="ui">
-      J1 <span id="name1">Bleu</span>: <span id="score1">0</span> &nbsp; ❤ <span id="lives1">5</span> &nbsp;&nbsp;
-      J2 <span id="name2">Vert</span>: <span id="score2">0</span> &nbsp; ❤ <span id="lives2">5</span> &nbsp;&nbsp;
-      Vague: <span id="wave">1</span>
+      J1 <span id="name1">Bleu</span>: <span id="score1">0</span> ❤ <span id="lives1">5</span>
+      &nbsp;&nbsp;
+      <span id="p2UI">J2 <span id="name2">Vert</span>: <span id="score2">0</span> ❤ <span id="lives2">5</span></span>
+      &nbsp;&nbsp; Vague: <span id="wave">1</span>
     </div>
     <div id="highscore">
       RECORD : <span id="highScoreValue">0</span><br>
       <span id="highScoreHolder" style="font-size:13px;"></span>
     </div>
-    <div id="gamepadInfo">Manettes : <span id="gamepadStatus">0</span> &nbsp;|&nbsp; ESPACE = Pause</div>
-    <div id="pauseIndicator">❚❚ PAUSE</div>
+    <div id="gamepadInfo">ESPACE = Pause &nbsp;|&nbsp; Manettes : <span id="gamepadStatus">0</span></div>
 
-    <!-- ========== NOUVEAU MENU PRINCIPAL ========== -->
+    <!-- MENU PRINCIPAL -->
     <div id="mainMenu">
       <div class="menu-left">
         <div class="game-title">BONHOMME<br><span>SHOOTER</span></div>
-        <div class="game-subtitle">2 JOUEURS • VAGUES • BOSS</div>
+        <div class="game-subtitle">CONFIGURATION • VAGUES • BOSS</div>
       </div>
       <div class="menu-right">
-        <button class="menu-btn primary" data-num="01" onclick="startGame()">JOUER</button>
-        <button class="menu-btn" data-num="02" onclick="showSubScreen('recordsScreen')">RECORDS</button>
-        <button class="menu-btn" data-num="03" onclick="showSubScreen('controlsScreen')">CONTRÔLES</button>
-        <button class="menu-btn" data-num="04" onclick="showSubScreen('creditsScreen')">CRÉDITS</button>
+        <button class="menu-btn primary" onclick="openConfig()">JOUER</button>
+        <button class="menu-btn" onclick="showSubScreen('recordsScreen')">RECORDS</button>
+        <button class="menu-btn" onclick="showSubScreen('controlsScreen')">CONTRÔLES</button>
+        <button class="menu-btn" onclick="showSubScreen('creditsScreen')">CRÉDITS</button>
       </div>
     </div>
 
-    <!-- Écrans secondaires -->
+    <!-- ÉCRAN DE CONFIGURATION -->
+    <div id="configScreen">
+      <h2>CONFIGURATION</h2>
+
+      <div class="config-group">
+        <label>NOMBRE DE JOUEURS</label>
+        <div class="config-options">
+          <button id="btn1P" class="active" onclick="setPlayers(1)">1 JOUEUR</button>
+          <button id="btn2P" onclick="setPlayers(2)">2 JOUEURS</button>
+        </div>
+      </div>
+
+      <div class="config-group" id="greenPlayerGroup">
+        <label>JOUEUR VERT</label>
+        <div class="config-options">
+          <button id="btnManual" class="active" onclick="setGreenMode('manual')">MANUEL</button>
+          <button id="btnAuto" onclick="setGreenMode('auto')">AUTOMATIQUE (IA)</button>
+        </div>
+      </div>
+
+      <div class="config-actions">
+        <button class="btn-back" onclick="closeConfig()">RETOUR</button>
+        <button class="btn-start" onclick="startGame()">LANCER LA PARTIE</button>
+      </div>
+    </div>
+
+    <!-- Records -->
     <div id="recordsScreen" class="sub-screen">
       <h2>RECORDS</h2>
       <div class="record-box" id="menuRecordList"></div>
-      <button class="back-btn" onclick="clearAllScores()" style="margin-bottom:10px;border-color:#c0392b;color:#c0392b;">Effacer tous</button>
+      <button class="back-btn" onclick="clearAllScores()" style="border-color:#c0392b;color:#c0392b;margin-bottom:10px;">Effacer tous</button>
       <button class="back-btn" onclick="hideSubScreens()">RETOUR</button>
     </div>
 
+    <!-- Contrôles -->
     <div id="controlsScreen" class="sub-screen">
       <h2>CONTRÔLES</h2>
       <div class="info-box">
         <strong>JOUEUR 1 (Bleu)</strong><br>
         ← → : Déplacer &nbsp;&nbsp; ↑ : Sauter &nbsp;&nbsp; ↓ : S’accroupir<br>
         <strong>E</strong> : Tirer<br><br>
-        <strong>JOUEUR 2 (Vert)</strong><br>
+        <strong>JOUEUR 2 (Vert)</strong> — si Manuel<br>
         Q / D : Déplacer &nbsp;&nbsp; Z : Sauter &nbsp;&nbsp; S : S’accroupir<br>
         <strong>F</strong> : Tirer<br><br>
-        <strong>ESPACE</strong> : Mettre en pause / Reprendre<br>
-        Manettes supportées automatiquement
+        <strong>ESPACE</strong> : Pause / Reprendre
       </div>
       <button class="back-btn" onclick="hideSubScreens()">RETOUR</button>
     </div>
 
+    <!-- Crédits -->
     <div id="creditsScreen" class="sub-screen">
       <h2>CRÉDITS</h2>
       <div class="info-box" style="text-align:center;">
@@ -334,7 +402,7 @@
       <button class="back-btn" onclick="hideSubScreens()">RETOUR</button>
     </div>
 
-    <!-- ========== MENU PAUSE ========== -->
+    <!-- MENU PAUSE -->
     <div id="pauseMenu">
       <h2>PAUSE</h2>
       <button class="pause-btn" onclick="resumeGame()">REPRENDRE</button>
@@ -343,7 +411,34 @@
   </div>
 
   <script>
-    // ==================== AUDIO ====================
+    // ========== CONFIGURATION ==========
+    let config = {
+      players: 1,          // 1 ou 2
+      greenMode: 'manual'  // 'manual' ou 'auto'
+    };
+
+    function setPlayers(n) {
+      config.players = n;
+      document.getElementById('btn1P').classList.toggle('active', n === 1);
+      document.getElementById('btn2P').classList.toggle('active', n === 2);
+      document.getElementById('greenPlayerGroup').style.opacity = n === 2 ? '1' : '0.35';
+      document.getElementById('greenPlayerGroup').style.pointerEvents = n === 2 ? 'auto' : 'none';
+    }
+
+    function setGreenMode(mode) {
+      config.greenMode = mode;
+      document.getElementById('btnManual').classList.toggle('active', mode === 'manual');
+      document.getElementById('btnAuto').classList.toggle('active', mode === 'auto');
+    }
+
+    function openConfig() {
+      document.getElementById('configScreen').classList.add('active');
+    }
+    function closeConfig() {
+      document.getElementById('configScreen').classList.remove('active');
+    }
+
+    // ========== AUDIO ==========
     let audioCtx = null;
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -355,9 +450,7 @@
       const bufferSize = audioCtx.sampleRate * 0.07;
       const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2.8);
-      }
+      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random()*2-1) * Math.pow(1 - i/bufferSize, 2.8);
       const noise = audioCtx.createBufferSource();
       noise.buffer = buffer;
       const filter = audioCtx.createBiquadFilter();
@@ -366,9 +459,7 @@
       const gain = audioCtx.createGain();
       gain.gain.setValueAtTime(0.65, t);
       gain.gain.exponentialRampToValueAtTime(0.01, t + 0.07);
-      noise.connect(filter);
-      filter.connect(gain);
-      gain.connect(audioCtx.destination);
+      noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
       noise.start(t);
 
       const osc = audioCtx.createOscillator();
@@ -378,10 +469,8 @@
       const g2 = audioCtx.createGain();
       g2.gain.setValueAtTime(0.22, t);
       g2.gain.exponentialRampToValueAtTime(0.01, t + 0.04);
-      osc.connect(g2);
-      g2.connect(audioCtx.destination);
-      osc.start(t);
-      osc.stop(t + 0.04);
+      osc.connect(g2); g2.connect(audioCtx.destination);
+      osc.start(t); osc.stop(t + 0.04);
     }
 
     function playEnemyShootSound() {
@@ -477,11 +566,10 @@
       osc.start(t); osc.stop(t + 0.05);
     }
 
-    // ==================== ÉTAT DU JEU ====================
-    let gameState = "menu"; // menu | playing | paused
+    // ========== ÉTAT ==========
+    let gameState = "menu";
     let isPaused = false;
 
-    // ==================== MENU ====================
     function showSubScreen(id) {
       document.querySelectorAll('.sub-screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
@@ -494,10 +582,18 @@
     function startGame() {
       initAudio();
       document.getElementById('mainMenu').classList.add('hidden');
+      document.getElementById('configScreen').classList.remove('active');
       hideSubScreens();
-      // Reset
+
+      // Reset joueurs
       player1.score = 0; player1.lives = 5; player1.x = 150; player1.y = GROUND;
-      player2.score = 0; player2.lives = 5; player2.x = 250; player2.y = GROUND;
+      player2.score = 0; player2.lives = 5; player2.x = 280; player2.y = GROUND;
+      player2.active = config.players === 2;
+      player2.isAI = config.players === 2 && config.greenMode === 'auto';
+
+      // Afficher/masquer UI J2
+      document.getElementById('p2UI').style.display = player2.active ? 'inline' : 'none';
+
       wave = 1;
       enemies.length = 0;
       enemyBullets.length = 0;
@@ -508,7 +604,6 @@
       isPaused = false;
       gameState = "playing";
       document.getElementById('pauseMenu').classList.remove('active');
-      document.getElementById('pauseIndicator').style.display = 'none';
       updateUI();
     }
 
@@ -516,23 +611,19 @@
       isPaused = false;
       gameState = "menu";
       document.getElementById('pauseMenu').classList.remove('active');
-      document.getElementById('pauseIndicator').style.display = 'none';
       document.getElementById('mainMenu').classList.remove('hidden');
       hideSubScreens();
     }
 
     function togglePause() {
       if (gameState !== "playing" && gameState !== "paused") return;
-
       isPaused = !isPaused;
       if (isPaused) {
         gameState = "paused";
         document.getElementById('pauseMenu').classList.add('active');
-        document.getElementById('pauseIndicator').style.display = 'block';
       } else {
         gameState = "playing";
         document.getElementById('pauseMenu').classList.remove('active');
-        document.getElementById('pauseIndicator').style.display = 'none';
       }
     }
 
@@ -540,12 +631,10 @@
       isPaused = false;
       gameState = "playing";
       document.getElementById('pauseMenu').classList.remove('active');
-      document.getElementById('pauseIndicator').style.display = 'none';
     }
 
-    // ==================== HIGH SCORES ====================
+    // ========== HIGH SCORES ==========
     let highScores = JSON.parse(localStorage.getItem('bonhommeShooterScores') || '[]');
-
     function saveHighScores() {
       localStorage.setItem('bonhommeShooterScores', JSON.stringify(highScores));
     }
@@ -565,7 +654,6 @@
       }
     }
     window.removeHighScore = removeHighScore;
-
     function clearAllScores() {
       if (confirm('Effacer TOUS les records ?')) {
         highScores = [];
@@ -593,7 +681,7 @@
       `).join('');
     }
 
-    // ==================== JEU ====================
+    // ========== JEU ==========
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const GRAVITY = 0.55;
@@ -613,10 +701,11 @@
       onGround: true, crouching: false, shootCooldown: 0
     };
     const player2 = {
-      x: 250, y: GROUND, vx: 0, vy: 0,
+      x: 280, y: GROUND, vx: 0, vy: 0,
       color: '#2ecc71', name: 'Vert',
       score: 0, lives: 5, facingRight: true,
-      onGround: true, crouching: false, shootCooldown: 0
+      onGround: true, crouching: false, shootCooldown: 0,
+      active: false, isAI: false
     };
 
     let bullets = [], enemyBullets = [], enemies = [];
@@ -636,27 +725,95 @@
       const key = e.key.toLowerCase();
       keys[key] = true;
 
-      // ESPACE = Pause
       if (e.code === 'Space') {
         e.preventDefault();
-        if (gameState === "playing" || gameState === "paused") {
-          togglePause();
+        if (gameState === "playing" || gameState === "paused") togglePause();
+      }
+      if (['arrowup','arrowdown','arrowleft','arrowright'].includes(key)) e.preventDefault();
+    });
+    document.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+    // ===== IA du joueur vert =====
+    function updateAI(p) {
+      if (!p.active || !p.isAI || isPaused) return;
+
+      // Cherche l'ennemi le plus proche
+      let nearest = null;
+      let minDist = 9999;
+      for (const e of enemies) {
+        const d = e.x - p.x;
+        if (d > 0 && d < minDist) {
+          minDist = d;
+          nearest = e;
+        }
+      }
+      if (boss && boss.x > p.x) {
+        const d = boss.x - p.x;
+        if (d < minDist) {
+          minDist = d;
+          nearest = boss;
         }
       }
 
-      if (['arrowup','arrowdown','arrowleft','arrowright'].includes(key)) e.preventDefault();
-    });
-    document.addEventListener('keyup', e => {
-      keys[e.key.toLowerCase()] = false;
-    });
+      p.vx = 0;
+      p.crouching = false;
+
+      if (nearest) {
+        // Avancer un peu vers l'ennemi mais rester en retrait
+        if (nearest.x - p.x > 280) {
+          p.vx = 4.8;
+          p.facingRight = true;
+        } else if (nearest.x - p.x < 180) {
+          p.vx = -3.5;
+          p.facingRight = false;
+        } else {
+          p.facingRight = true;
+        }
+
+        // Sauter parfois
+        if (p.onGround && Math.random() < 0.012) {
+          p.vy = JUMP_FORCE;
+          p.onGround = false;
+        }
+
+        // Tirer
+        if (p.shootCooldown <= 0 && nearest.x - p.x < 450) {
+          bullets.push({
+            x: p.x + 28,
+            y: p.y - 38,
+            vx: 14,
+            owner: p
+          });
+          playPlayerShootSound();
+          p.shootCooldown = 14;
+        }
+      } else {
+        // Pas d'ennemi → rester autour de x = 250-320
+        if (p.x < 240) { p.vx = 3; p.facingRight = true; }
+        else if (p.x > 340) { p.vx = -3; p.facingRight = false; }
+      }
+
+      // Physique
+      p.vy += GRAVITY;
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.y >= GROUND) {
+        p.y = GROUND;
+        p.vy = 0;
+        p.onGround = true;
+      }
+      p.x = Math.max(40, Math.min(500, p.x));
+
+      if (p.shootCooldown > 0) p.shootCooldown--;
+    }
 
     function updatePlayer(p, left, right, jump, crouch, shootKey) {
-      if (isPaused) return;
+      if (isPaused || !p.active) return;
+      if (p.isAI) return; // géré par updateAI
 
       p.vx = 0;
       if (keys[left])  { p.vx = -5.5; p.facingRight = false; }
       if (keys[right]) { p.vx =  5.5; p.facingRight = true; }
-
       p.crouching = keys[crouch] && p.onGround;
 
       if (keys[jump] && p.onGround && !p.crouching) {
@@ -667,7 +824,6 @@
       p.vy += GRAVITY;
       p.x += p.vx;
       p.y += p.vy;
-
       if (p.y >= GROUND) {
         p.y = GROUND;
         p.vy = 0;
@@ -690,6 +846,7 @@
     }
 
     function drawHuman(p) {
+      if (!p.active) return;
       const crouchOffset = p.crouching ? 18 : 0;
       const bodyH = p.crouching ? 28 : 42;
       ctx.save();
@@ -750,6 +907,14 @@
       ctx.fillStyle = '#222';
       ctx.fillRect(dir*38, gunY-2, dir*6, 4);
 
+      // Indicateur IA
+      if (p.isAI) {
+        ctx.fillStyle = '#00ff9d';
+        ctx.font = 'bold 11px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('IA', 0, -bodyH - crouchOffset - 36);
+      }
+
       ctx.restore();
     }
 
@@ -774,7 +939,6 @@
       ctx.arc(-4, -54, 1.5, 0, Math.PI*2);
       ctx.arc(4, -54, 1.5, 0, Math.PI*2);
       ctx.fill();
-      // Mitrailleuse à gauche
       ctx.fillStyle = '#333';
       ctx.fillRect(-42, -32, 32, 7);
       ctx.fillRect(-18, -36, 14, 14);
@@ -835,19 +999,22 @@
     }
 
     function gameOver() {
-      const maxScore = Math.max(player1.score, player2.score);
-      const winner = player1.score >= player2.score ? player1 : player2;
-      if (maxScore > 0) addHighScore(winner.name, maxScore);
-      alert(`Game Over !\nVague : ${wave}\n\n${player1.name}: ${player1.score}\n${player2.name}: ${player2.score}`);
+      const scores = [];
+      if (player1.lives >= 0) scores.push({name: player1.name, score: player1.score});
+      if (player2.active) scores.push({name: player2.name, score: player2.score});
+      scores.sort((a,b) => b.score - a.score);
+      if (scores[0] && scores[0].score > 0) addHighScore(scores[0].name, scores[0].score);
+
+      let msg = `Game Over !\nVague : ${wave}\n\n${player1.name}: ${player1.score}`;
+      if (player2.active) msg += `\n${player2.name}: ${player2.score}`;
+      alert(msg);
       returnToMainMenu();
     }
 
-    // ==================== GAME LOOP ====================
+    // ========== GAME LOOP ==========
     function gameLoop() {
       requestAnimationFrame(gameLoop);
-
-      if (gameState === "menu") return;
-      if (isPaused) return; // Le jeu est complètement arrêté
+      if (gameState === "menu" || isPaused) return;
 
       frameCount++;
       ctx.clearRect(0, 0, 1200, 600);
@@ -860,7 +1027,6 @@
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 1200, 600);
 
-      // Soleil
       ctx.beginPath();
       ctx.arc(1050, 80, 45, 0, Math.PI*2);
       ctx.fillStyle = '#ffeaa7';
@@ -884,24 +1050,16 @@
       }
       for (let i = birds.length-1; i >= 0; i--) {
         const b = birds[i];
-        b.x -= b.speed;
-        b.wing += 0.25;
+        b.x -= b.speed; b.wing += 0.25;
         if (b.x < -50) { birds.splice(i,1); continue; }
         ctx.save();
         ctx.translate(b.x, b.y);
         const flap = Math.sin(b.wing) * 12;
-        ctx.strokeStyle = '#222';
-        ctx.lineWidth = 2.2;
-        ctx.beginPath();
-        ctx.moveTo(0,0); ctx.quadraticCurveTo(-14, -10+flap, -22, -2+flap*0.6);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(0,0); ctx.quadraticCurveTo(14, -10+flap, 22, -2+flap*0.6);
-        ctx.stroke();
+        ctx.strokeStyle = '#222'; ctx.lineWidth = 2.2;
+        ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(-14, -10+flap, -22, -2+flap*0.6); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(14, -10+flap, 22, -2+flap*0.6); ctx.stroke();
         ctx.fillStyle = '#333';
-        ctx.beginPath();
-        ctx.ellipse(0, 0, 7, 3.5, 0, 0, Math.PI*2);
-        ctx.fill();
+        ctx.beginPath(); ctx.ellipse(0, 0, 7, 3.5, 0, 0, Math.PI*2); ctx.fill();
         ctx.restore();
       }
 
@@ -913,15 +1071,11 @@
         const p = planes[i];
         p.x -= p.speed;
         if (p.x < -80) { planes.splice(i,1); continue; }
-        ctx.fillStyle = '#ddd';
-        ctx.fillRect(p.x, p.y, 50, 12);
-        ctx.fillStyle = '#bbb';
-        ctx.fillRect(p.x+15, p.y-8, 25, 8);
+        ctx.fillStyle = '#ddd'; ctx.fillRect(p.x, p.y, 50, 12);
+        ctx.fillStyle = '#bbb'; ctx.fillRect(p.x+15, p.y-8, 25, 8);
         ctx.fillStyle = '#999';
         ctx.beginPath();
-        ctx.moveTo(p.x+50, p.y);
-        ctx.lineTo(p.x+62, p.y+6);
-        ctx.lineTo(p.x+50, p.y+12);
+        ctx.moveTo(p.x+50, p.y); ctx.lineTo(p.x+62, p.y+6); ctx.lineTo(p.x+50, p.y+12);
         ctx.fill();
       }
 
@@ -929,9 +1083,12 @@
       ctx.fillStyle = '#2d5a27';
       ctx.fillRect(0, GROUND+5, 1200, 80);
 
-      // Joueurs (E = tir J1)
+      // Joueurs
       updatePlayer(player1, 'arrowleft', 'arrowright', 'arrowup', 'arrowdown', 'e');
-      updatePlayer(player2, 'q', 'd', 'z', 's', 'f');
+      if (player2.active) {
+        if (player2.isAI) updateAI(player2);
+        else updatePlayer(player2, 'q', 'd', 'z', 's', 'f');
+      }
       drawHuman(player1);
       drawHuman(player2);
 
@@ -1020,7 +1177,10 @@
         ctx.arc(b.x, b.y, b.isBoss ? 7 : 5, 0, Math.PI*2);
         ctx.fill();
 
-        [player1, player2].forEach(p => {
+        const targets = [player1];
+        if (player2.active) targets.push(player2);
+
+        for (const p of targets) {
           const hitY = p.crouching ? p.y-20 : p.y-35;
           const hitH = p.crouching ? 30 : 55;
           if (Math.abs(b.x - p.x) < 22 && Math.abs(b.y - hitY) < hitH/2) {
@@ -1028,9 +1188,14 @@
             p.lives--;
             playHitSound();
             updateUI();
-            if (p.lives <= 0) gameOver();
+            if (p.lives <= 0) {
+              if (!player2.active || (player1.lives <= 0 && player2.lives <= 0)) {
+                gameOver();
+              }
+            }
+            break;
           }
-        });
+        }
         if (b.x < -30) enemyBullets.splice(i,1);
       }
 
@@ -1048,14 +1213,14 @@
         }
       }
 
-      // Progression vague
+      // Vagues
       if (!isBossWave && frameCount % 900 === 0) {
         if (wave % 2 === 0) spawnBoss();
         else wave++;
         updateUI();
       }
 
-      // Gamepad
+      // Gamepad count
       const gps = navigator.getGamepads ? navigator.getGamepads() : [];
       let count = 0;
       for (let g of gps) if (g) count++;
@@ -1063,6 +1228,7 @@
     }
 
     // Démarrage
+    setPlayers(1); // par défaut 1 joueur
     updateHighScoreDisplay();
     updateMenuRecords();
     gameLoop();
