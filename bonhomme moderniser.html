@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Bonhomme Shooter - 2 Joueurs</title>
+  <title>Bonhomme Shooter</title>
   <style>
     body { margin:0; padding:0; display:flex; justify-content:center; align-items:center; height:100vh; background:#111; overflow:hidden; font-family: Arial, sans-serif; }
     canvas { border:4px solid #ffcc00; display: none; }
@@ -17,33 +17,33 @@
       z-index: 100; color: white; text-align: center;
     }
     #menu h1 {
-      font-size: 48px; color: #ffcc00;
+      font-size: 46px; color: #ffcc00;
       text-shadow: 3px 3px 0 #000, 0 0 20px #ffaa00;
       margin-bottom: 8px; letter-spacing: 2px;
     }
-    #menu .subtitle { font-size: 20px; color: #aaddff; margin-bottom: 25px; }
+    #menu .subtitle { font-size: 19px; color: #aaddff; margin-bottom: 22px; }
     #menu button {
       background: #ffcc00; color: #111; border: none;
-      padding: 14px 45px; font-size: 22px; font-weight: bold;
+      padding: 14px 42px; font-size: 22px; font-weight: bold;
       border-radius: 8px; cursor: pointer; margin: 8px;
       transition: 0.2s; box-shadow: 0 6px 0 #cc9900;
     }
     #menu button:hover { background: #ffe066; transform: translateY(-3px); box-shadow: 0 9px 0 #cc9900; }
     #menu button:active { transform: translateY(2px); box-shadow: 0 2px 0 #cc9900; }
-    #menu .mode-buttons { display: flex; gap: 12px; margin-bottom: 18px; }
+    #menu .mode-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 16px; max-width: 700px; }
     #menu .mode-btn {
       background: #333; color: white; border: 3px solid #666;
-      padding: 11px 26px; font-size: 17px; border-radius: 8px; cursor: pointer; transition: 0.2s;
+      padding: 11px 18px; font-size: 15px; border-radius: 8px; cursor: pointer; transition: 0.2s;
     }
     #menu .mode-btn.active { background: #ffcc00; color: #111; border-color: #ffaa00; box-shadow: 0 0 15px #ffcc00; }
     #menu .mode-btn:hover { border-color: #ffcc00; }
     #menu .controls {
-      margin-top: 22px; background: rgba(0,0,0,0.5);
-      padding: 16px 28px; border-radius: 12px; font-size: 14px;
-      line-height: 1.55; max-width: 620px; text-align: left;
+      margin-top: 18px; background: rgba(0,0,0,0.5);
+      padding: 14px 24px; border-radius: 12px; font-size: 13.5px;
+      line-height: 1.5; max-width: 640px; text-align: left;
     }
     #menu .controls strong { color: #ffcc00; }
-    #menu .record { margin-top: 18px; font-size: 17px; color: #ffdd00; }
+    #menu .record { margin-top: 16px; font-size: 16px; color: #ffdd00; }
   </style>
 </head>
 <body>
@@ -54,6 +54,7 @@
     
     <div class="mode-buttons">
       <button class="mode-btn active" id="mode1">1 JOUEUR</button>
+      <button class="mode-btn" id="modeAI">1 JOUEUR + COÉQUIPIER AUTO</button>
       <button class="mode-btn" id="mode2">2 JOUEURS</button>
     </div>
 
@@ -61,12 +62,12 @@
     
     <div class="controls">
       <strong>=== CLAVIER ===</strong><br>
-      <strong>Joueur 1 (Bleu)</strong> : ← → bouger • ↑ sauter • ↓ ou Ctrl s’agenouiller • <b>R</b> tirer<br>
+      <strong>Joueur 1 (Bleu)</strong> : ← → bouger • ↑ sauter • ↓ / Ctrl s’agenouiller • <b>R</b> tirer<br>
       <strong>Joueur 2 (Vert)</strong> : A D bouger • W sauter • S s’agenouiller • <b>L</b> tirer<br><br>
       
       <strong>=== MANETTE ===</strong><br>
-      Stick gauche = bouger • Stick haut = sauter • Stick bas = s’agenouiller<br>
-      Bouton A (vert) ou RT = tirer • Bouton B (rouge) = s’agenouiller<br>
+      Stick gauche = bouger • Stick haut = sauter • Stick bas / Bouton B = s’agenouiller<br>
+      Bouton A ou RT = tirer<br>
       Manette 1 → Joueur 1 &nbsp;&nbsp;|&nbsp;&nbsp; Manette 2 → Joueur 2
     </div>
 
@@ -106,18 +107,28 @@
     let gamepads = [];
     let player1ShootCooldown = 0, player2ShootCooldown = 0;
     let gameStarted = false;
-    let isTwoPlayers = false;
+    
+    // Modes : "solo" | "ai" | "duo"
+    let gameMode = "solo"; 
 
     // ===== MENU =====
     document.getElementById("mode1").addEventListener("click", () => {
-      isTwoPlayers = false;
+      gameMode = "solo";
       document.getElementById("mode1").classList.add("active");
+      document.getElementById("modeAI").classList.remove("active");
+      document.getElementById("mode2").classList.remove("active");
+    });
+    document.getElementById("modeAI").addEventListener("click", () => {
+      gameMode = "ai";
+      document.getElementById("modeAI").classList.add("active");
+      document.getElementById("mode1").classList.remove("active");
       document.getElementById("mode2").classList.remove("active");
     });
     document.getElementById("mode2").addEventListener("click", () => {
-      isTwoPlayers = true;
+      gameMode = "duo";
       document.getElementById("mode2").classList.add("active");
       document.getElementById("mode1").classList.remove("active");
+      document.getElementById("modeAI").classList.remove("active");
     });
 
     function loadHighScore() {
@@ -142,17 +153,22 @@
 
     document.getElementById("startBtn").addEventListener("click", () => {
       const player1Name = prompt("Entrez le nom du Joueur 1 (Bleu) :", "Joueur Bleu") || "Joueur Bleu";
-      let player2Name = "Joueur Vert";
-      if (isTwoPlayers) {
+      let player2Name = "Coéquipier";
+
+      if (gameMode === "duo") {
         player2Name = prompt("Entrez le nom du Joueur 2 (Vert) :", "Joueur Vert") || "Joueur Vert";
+      } else if (gameMode === "ai") {
+        player2Name = "Coéquipier Auto";
       }
 
+      const hasPlayer2 = gameMode !== "solo";
+
       player1 = { x:200, y:420, speed:7, color:"#00aaff", score:0, vy:0, onGround:true, lives:5, alive:true, name: player1Name, crouching:false };
-      player2 = { x:800, y:420, speed:7, color:"#00ff88", score:0, vy:0, onGround:true, lives:5, alive:isTwoPlayers, name: player2Name, crouching:false };
+      player2 = { x:350, y:420, speed:6.5, color:"#00ff88", score:0, vy:0, onGround:true, lives:5, alive:hasPlayer2, name: player2Name, crouching:false };
 
       document.getElementById("name1").textContent = player1.name;
       document.getElementById("name2").textContent = player2.name;
-      document.getElementById("player2UI").style.display = isTwoPlayers ? "inline" : "none";
+      document.getElementById("player2UI").style.display = hasPlayer2 ? "inline" : "none";
 
       for (let i = 0; i < 6; i++) {
         clouds.push({ x: Math.random() * 1400 - 100, y: 40 + Math.random() * 160, speed: 0.3 + Math.random() * 0.5, size: 0.7 + Math.random() * 0.6 });
@@ -200,17 +216,14 @@
           player1.x += player1.speed * leftStickX * speedMult;
         }
         
-        // Sauter
         if (leftStickY < -0.4 && player1.onGround && !player1.crouching) {
           player1.vy = JUMP_FORCE;
           player1.onGround = false;
         }
         
-        // S'agenouiller (stick bas ou bouton B)
         const crouchBtn = (gp1.buttons[1] && gp1.buttons[1].pressed) || leftStickY > 0.45;
         player1.crouching = crouchBtn && player1.onGround;
         
-        // Tirer (A ou RT)
         if ((gp1.buttons[0] && gp1.buttons[0].pressed) || (gp1.buttons[7] && gp1.buttons[7].pressed)) {
           if (!gp1.shootCooldown1 || gp1.shootCooldown1 <= 0) {
             shoot(player1);
@@ -221,8 +234,8 @@
         if (gp1.shootCooldown1) gp1.shootCooldown1--;
       }
 
-      // Joueur 2
-      if (isTwoPlayers) {
+      // Joueur 2 seulement en mode duo (humain)
+      if (gameMode === "duo") {
         const gp2 = getGamepad(1);
         if (gp2 && player2.alive) {
           const leftStickX = gp2.axes[0];
@@ -253,6 +266,64 @@
       }
     }
 
+    // ===== IA DU COÉQUIPIER =====
+    function updateAI() {
+      if (gameMode !== "ai" || !player2.alive) return;
+
+      // Cherche l'ennemi le plus proche à droite
+      let nearestEnemy = null;
+      let nearestDist = 9999;
+      for (let e of enemies) {
+        if (e.x > player2.x) {
+          const d = e.x - player2.x;
+          if (d < nearestDist) {
+            nearestDist = d;
+            nearestEnemy = e;
+          }
+        }
+      }
+
+      // Se positionne un peu à droite du joueur 1
+      const targetX = player1.x + 160;
+      
+      if (player2.x < targetX - 30) {
+        player2.x += player2.speed * 0.9;
+      } else if (player2.x > targetX + 80) {
+        player2.x -= player2.speed * 0.7;
+      }
+
+      // Sauter de temps en temps ou si ennemi proche
+      if (player2.onGround && !player2.crouching) {
+        if (Math.random() < 0.008 || (nearestEnemy && nearestDist < 180 && Math.random() < 0.03)) {
+          player2.vy = JUMP_FORCE;
+          player2.onGround = false;
+        }
+      }
+
+      // S'agenouiller parfois
+      player2.crouching = player2.onGround && Math.random() < 0.01;
+
+      // Tirer sur les ennemis
+      if (nearestEnemy && nearestDist < 700) {
+        if (!player2ShootCooldown || player2ShootCooldown <= 0) {
+          shoot(player2);
+          playRealisticShootSound();
+          player2ShootCooldown = 14;
+        }
+      }
+      if (player2ShootCooldown > 0) player2ShootCooldown--;
+
+      // Physique
+      player2.vy += GRAVITY;
+      player2.y += player2.vy;
+      if (player2.y >= 420) {
+        player2.y = 420;
+        player2.vy = 0;
+        player2.onGround = true;
+      }
+      player2.x = Math.max(50, Math.min(1050, player2.x));
+    }
+
     // ===== TIR CLAVIER =====
     function handleKeyboardShooting() {
       if (!gameStarted) return;
@@ -263,7 +334,7 @@
       }
       if (player1ShootCooldown > 0) player1ShootCooldown--;
       
-      if (isTwoPlayers && keys['l'] && player2.alive && player2ShootCooldown <= 0) {
+      if (gameMode === "duo" && keys['l'] && player2.alive && player2ShootCooldown <= 0) {
         shoot(player2);
         playRealisticShootSound();
         player2ShootCooldown = 8;
@@ -354,7 +425,8 @@
       playHitSound();
       if(player.lives<=0){ 
         player.alive=false; 
-        if(!player1.alive && (!isTwoPlayers || !player2.alive)) gameOver(); 
+        const hasPlayer2 = gameMode !== "solo";
+        if(!player1.alive && (!hasPlayer2 || !player2.alive)) gameOver(); 
       }
     }
     function isBossWave(w){ return w>=2 && w%2===0; }
@@ -368,7 +440,7 @@
       bossSpawnedThisWave=true;
     }
 
-    // ===== DESSINS =====
+    // ===== DESSINS (simplifiés pour la taille) =====
     function drawCloud(c) {
       ctx.fillStyle = "rgba(255,255,255,0.85)";
       ctx.beginPath();
@@ -396,14 +468,6 @@
       ctx.quadraticCurveTo(-8, -18 + wingFlap, -22, -8 + wingFlap * 0.7);
       ctx.quadraticCurveTo(-16, -4 + wingFlap * 0.4, -6, 0);
       ctx.closePath(); ctx.fill();
-      ctx.fillStyle = "#1a1a1a";
-      ctx.beginPath();
-      ctx.moveTo(0, 2);
-      ctx.quadraticCurveTo(-8, 16 - wingFlap, -20, 7 - wingFlap * 0.6);
-      ctx.quadraticCurveTo(-14, 4 - wingFlap * 0.3, -5, 1);
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = "#111";
-      ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(-20, -6); ctx.lineTo(-18, 0); ctx.lineTo(-20, 6); ctx.closePath(); ctx.fill();
       ctx.restore();
     }
     function drawPlane(p) {
@@ -416,14 +480,6 @@
       ctx.beginPath(); ctx.ellipse(8, -3, 10, 5, 0, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = "#bbb";
       ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(-25, -18); ctx.lineTo(5, -18); ctx.lineTo(15, 0); ctx.closePath(); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(-20, 14); ctx.lineTo(5, 14); ctx.lineTo(12, 0); ctx.closePath(); ctx.fill();
-      ctx.fillStyle = "#999";
-      ctx.beginPath(); ctx.moveTo(-22, 0); ctx.lineTo(-32, -12); ctx.lineTo(-28, 0); ctx.lineTo(-32, 10); ctx.closePath(); ctx.fill();
-      ctx.fillStyle = "#444"; ctx.fillRect(26, -3, 6, 6);
-      ctx.beginPath(); ctx.arc(29, 0, 8, 0, Math.PI * 2);
-      ctx.strokeStyle = "#666"; ctx.lineWidth = 2; ctx.stroke();
-      ctx.fillStyle = "#2266aa";
-      for (let i = 0; i < 4; i++) ctx.fillRect(-8 + i * 6, -2, 3, 3);
       ctx.restore();
     }
     function updateDecorations() {
@@ -453,10 +509,6 @@
       ctx.fillStyle=gradient; ctx.fillRect(0,0,canvas.width,600);
       ctx.fillStyle="#ffdd00"; ctx.beginPath(); ctx.arc(280,110,48,0,Math.PI*2); ctx.fill();
       ctx.fillStyle="#ffaa00"; ctx.beginPath(); ctx.arc(280,110,36,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle="#ffffff";
-      [[80,50],[620,35],[1050,80],[420,120],[880,45]].forEach(s=>{
-        ctx.beginPath(); ctx.arc(s[0],s[1],2.8,0,Math.PI*2); ctx.fill();
-      });
       clouds.forEach(drawCloud); birds.forEach(drawBird); planes.forEach(drawPlane);
       ctx.fillStyle="#1e2a1e";
       ctx.beginPath(); ctx.moveTo(0,450); ctx.lineTo(180,280); ctx.lineTo(420,450); ctx.fill();
@@ -493,33 +545,23 @@
       ctx.fillStyle = "#444"; ctx.fillRect(x + 22, y + 16, 12, 3);
       ctx.restore();
     }
-
-    // Dessin humain avec position agenouillée
     function drawHuman(x, y, color, name, facingRight = true, crouching = false) {
       ctx.save();
-      const crouchOffset = crouching ? 18 : 0; // baisse le personnage
+      const crouchOffset = crouching ? 18 : 0;
       y += crouchOffset;
-
-      // Torse
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.roundRect(x + 6, y + 18, 18, crouching ? 18 : 24, 4);
       ctx.fill();
-
-      // Tête
       ctx.fillStyle = "#f5cba7";
       ctx.beginPath();
       ctx.arc(x + 15, y + 10, 11, 0, Math.PI * 2);
       ctx.fill();
-
-      // Cheveux
       ctx.fillStyle = "#3d2314";
       ctx.beginPath();
       ctx.arc(x + 15, y + 6, 11, Math.PI * 1.1, Math.PI * 1.9);
       ctx.fill();
       ctx.fillRect(x + 5, y + 2, 20, 6);
-
-      // Visage
       ctx.strokeStyle = "#2c1810"; ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(x + 9, y + 6); ctx.lineTo(x + 13, y + 5);
@@ -535,16 +577,6 @@
       ctx.arc(x + 11.5, y + 9, 1.4, 0, Math.PI * 2);
       ctx.arc(x + 19.5, y + 9, 1.4, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "#d4a574"; ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(x + 15, y + 10); ctx.lineTo(x + 15, y + 13); ctx.lineTo(x + 16.5, y + 13.5);
-      ctx.stroke();
-      ctx.strokeStyle = "#a0522d"; ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(x + 15, y + 15, 3, 0.1, Math.PI - 0.1);
-      ctx.stroke();
-
-      // Bras
       ctx.strokeStyle = color; ctx.lineWidth = 5; ctx.lineCap = "round";
       ctx.beginPath();
       ctx.moveTo(x + 8, y + 22); ctx.lineTo(x + 0, y + 32);
@@ -552,13 +584,9 @@
       ctx.beginPath();
       ctx.moveTo(x + 22, y + 22); ctx.lineTo(x + 32, y + 26);
       ctx.stroke();
-
       drawMachineGun(x, y, facingRight);
-
-      // Jambes (plus courtes si agenouillé)
       ctx.strokeStyle = "#2c3e50"; ctx.lineWidth = 6;
       if (crouching) {
-        // Position agenouillée
         ctx.beginPath();
         ctx.moveTo(x + 11, y + 36); ctx.lineTo(x + 6, y + 42);
         ctx.moveTo(x + 19, y + 36); ctx.lineTo(x + 24, y + 42);
@@ -575,16 +603,13 @@
         ctx.fillRect(x + 4, y + 53, 8, 5);
         ctx.fillRect(x + 18, y + 53, 8, 5);
       }
-
-      // Nom
       ctx.fillStyle = "white";
       ctx.font = "bold 15px Arial";
       ctx.textAlign = "center";
-      ctx.fillText(name, x + 15, y - 6 - (crouching ? 0 : 0));
+      ctx.fillText(name, x + 15, y - 6);
       ctx.textAlign = "left";
       ctx.restore();
     }
-
     function drawEnemyHuman(x, y, color, name) {
       ctx.save();
       ctx.fillStyle = color;
@@ -594,27 +619,6 @@
       ctx.fillStyle = "#1a1a1a";
       ctx.beginPath(); ctx.arc(x + 15, y + 6, 11, Math.PI * 1.1, Math.PI * 1.9); ctx.fill();
       ctx.fillRect(x + 5, y + 2, 20, 6);
-      ctx.strokeStyle = "#2c1810"; ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(x + 9, y + 6); ctx.lineTo(x + 13, y + 5);
-      ctx.moveTo(x + 17, y + 5); ctx.lineTo(x + 21, y + 6);
-      ctx.stroke();
-      ctx.fillStyle = "#fff";
-      ctx.beginPath();
-      ctx.ellipse(x + 11, y + 9, 3, 2.2, 0, 0, Math.PI * 2);
-      ctx.ellipse(x + 19, y + 9, 3, 2.2, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#1a1a1a";
-      ctx.beginPath();
-      ctx.arc(x + 10.5, y + 9, 1.4, 0, Math.PI * 2);
-      ctx.arc(x + 18.5, y + 9, 1.4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = "#d4a574"; ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(x + 15, y + 10); ctx.lineTo(x + 15, y + 13); ctx.lineTo(x + 13.5, y + 13.5);
-      ctx.stroke();
-      ctx.strokeStyle = "#a0522d"; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.arc(x + 15, y + 15, 3, 0.1, Math.PI - 0.1); ctx.stroke();
       ctx.strokeStyle = color; ctx.lineWidth = 5; ctx.lineCap = "round";
       ctx.beginPath(); ctx.moveTo(x + 22, y + 22); ctx.lineTo(x + 30, y + 32); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x + 8, y + 22); ctx.lineTo(x - 2, y + 26); ctx.stroke();
@@ -653,11 +657,6 @@
       ctx.fillStyle = "#1a1a1a";
       ctx.beginPath(); ctx.arc(x + 30, y + 10, 16, Math.PI * 1.05, Math.PI * 1.95); ctx.fill();
       const eyeGlow = Math.sin(b.eyeAnim) * 0.5 + 0.5;
-      ctx.strokeStyle = "#2c1810"; ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(x + 20, y + 10); ctx.lineTo(x + 27, y + 8);
-      ctx.moveTo(x + 33, y + 8); ctx.lineTo(x + 40, y + 10);
-      ctx.stroke();
       ctx.fillStyle = `rgb(255, ${Math.floor(80 + eyeGlow * 100)}, 0)`;
       ctx.beginPath();
       ctx.ellipse(x + 24, y + 15, 4, 3, 0, 0, Math.PI * 2);
@@ -668,34 +667,28 @@
       ctx.arc(x + 24, y + 15, 1.8, 0, Math.PI * 2);
       ctx.arc(x + 36, y + 15, 1.8, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "#8b0000"; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(x + 30, y + 22, 5, 0.2, Math.PI - 0.2); ctx.stroke();
       ctx.strokeStyle = b.color; ctx.lineWidth = 8; ctx.lineCap = "round";
       ctx.beginPath(); ctx.moveTo(x + 15, y + 35); ctx.lineTo(x - 5, y + 40); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x + 45, y + 35); ctx.lineTo(x + 60, y + 42); ctx.stroke();
       ctx.fillStyle = "#1a1a1a"; ctx.fillRect(x - 30, y + 34, 48, 13);
       ctx.fillStyle = "#111"; ctx.fillRect(x - 50, y + 36, 24, 8);
       ctx.fillStyle = "#000"; ctx.fillRect(x - 56, y + 37, 8, 6);
-      ctx.fillStyle = "#333"; ctx.fillRect(x - 10, y + 47, 14, 18);
-      ctx.fillStyle = "#222"; ctx.fillRect(x + 8, y + 47, 10, 14);
       ctx.strokeStyle = "#2c3e50"; ctx.lineWidth = 9;
       ctx.beginPath();
       ctx.moveTo(x + 20, y + 64); ctx.lineTo(x + 14, y + 82);
       ctx.moveTo(x + 40, y + 64); ctx.lineTo(x + 46, y + 82);
       ctx.stroke();
-      ctx.fillStyle = "#ffdd00"; ctx.strokeStyle = "#cc9900"; ctx.lineWidth = 2;
+      ctx.fillStyle = "#ffdd00";
       ctx.beginPath();
       ctx.moveTo(x + 16, y - 2); ctx.lineTo(x + 16, y - 16); ctx.lineTo(x + 24, y - 8);
       ctx.lineTo(x + 30, y - 20); ctx.lineTo(x + 36, y - 8); ctx.lineTo(x + 44, y - 16); ctx.lineTo(x + 44, y - 2);
-      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.closePath(); ctx.fill();
       const barW = 120, barH = 10;
       const barX = x + 30 - barW/2, barY = y - 32;
       const ratio = b.lives / b.maxLives;
       ctx.fillStyle = "#333"; ctx.fillRect(barX-1, barY-1, barW+2, barH+2);
       ctx.fillStyle = ratio > 0.5 ? "#ff6600" : ratio > 0.25 ? "#ffaa00" : "#ff0000";
       ctx.fillRect(barX, barY, barW * ratio, barH);
-      ctx.strokeStyle = "#ffdd00"; ctx.lineWidth = 1.5;
-      ctx.strokeRect(barX-1, barY-1, barW+2, barH+2);
       ctx.fillStyle = "#fff";
       ctx.font = "bold 12px Arial";
       ctx.textAlign = "center";
@@ -737,9 +730,9 @@
           if(b.lives <= 0){
             const bonus = 150 + wave * 30;
             player1.score += bonus; 
-            if(isTwoPlayers) player2.score += bonus;
+            if(gameMode !== "solo") player2.score += bonus;
             document.getElementById("score1").textContent = player1.score;
-            if(isTwoPlayers) document.getElementById("score2").textContent = player2.score;
+            if(gameMode !== "solo") document.getElementById("score2").textContent = player2.score;
             playExplosionSound();
             boss = null;
           }
@@ -754,7 +747,7 @@
     canvas.addEventListener("click", () => { if(gameStarted && player1.alive){ shoot(player1); playRealisticShootSound(); }});
     canvas.addEventListener("contextmenu", e => { 
       e.preventDefault(); 
-      if(gameStarted && isTwoPlayers && player2.alive){ shoot(player2); playRealisticShootSound(); }
+      if(gameStarted && gameMode === "duo" && player2.alive){ shoot(player2); playRealisticShootSound(); }
     });
 
     function shoot(player){
@@ -764,19 +757,14 @@
 
     function updatePlayer(player, leftKey, rightKey, jumpKey, crouchKey){
       if(!player.alive) return;
-
-      // Agenouiller
       player.crouching = (keys[crouchKey] || keys["control"]) && player.onGround;
-
       const speedMult = player.crouching ? 0.5 : 1;
       if(keys[leftKey]) player.x -= player.speed * speedMult;
       if(keys[rightKey]) player.x += player.speed * speedMult;
-
       if(keys[jumpKey] && player.onGround && !player.crouching){ 
         player.vy = JUMP_FORCE; 
         player.onGround = false; 
       }
-
       player.vy += GRAVITY; 
       player.y += player.vy;
       if(player.y >= 420){ 
@@ -796,7 +784,12 @@
       handleKeyboardShooting();
 
       updatePlayer(player1, "arrowleft", "arrowright", "arrowup", "arrowdown");
-      if(isTwoPlayers) updatePlayer(player2, "a", "d", "w", "s");
+      
+      if (gameMode === "duo") {
+        updatePlayer(player2, "a", "d", "w", "s");
+      } else if (gameMode === "ai") {
+        updateAI();
+      }
       
       frameCount++;
       if(frameCount % (60 * 10) === 0){
@@ -808,7 +801,7 @@
       
       if(warTanks.length === 0){
         warTanks.push({x:0, y:0, shootTimer:0, ownerIdx:0});
-        if(isTwoPlayers) warTanks.push({x:0, y:0, shootTimer:0, ownerIdx:1});
+        if(gameMode !== "solo") warTanks.push({x:0, y:0, shootTimer:0, ownerIdx:1});
       }
       warTanks.forEach(tank => {
         const owner = tank.ownerIdx === 0 ? player1 : player2;
@@ -841,7 +834,7 @@
       if(player1.alive) drawHuman(player1.x, player1.y, player1.color, player1.name, true, player1.crouching);
       else drawDeadHuman(player1.x, player1.y, player1.color, player1.name);
     
-      if(isTwoPlayers){
+      if(gameMode !== "solo"){
         if(player2.alive) drawHuman(player2.x, player2.y, player2.color, player2.name, true, player2.crouching);
         else drawDeadHuman(player2.x, player2.y, player2.color, player2.name);
       }
@@ -858,9 +851,9 @@
         drawEnemyHuman(e.x, e.y, "#ff4444", "Ennemi");
         if(e.shootTimer <= 0){
           let target = null;
-          if(player1.alive && isTwoPlayers && player2.alive) target = player1.x < player2.x ? player1 : player2;
+          if(player1.alive && gameMode !== "solo" && player2.alive) target = player1.x < player2.x ? player1 : player2;
           else if(player1.alive) target = player1;
-          else if(isTwoPlayers && player2.alive) target = player2;
+          else if(gameMode !== "solo" && player2.alive) target = player2;
           if(target && target.x < e.x){
             const dx = (target.x + 15) - (e.x - 20), dy = (target.y + 25) - (e.y + 22);
             const dist = Math.sqrt(dx*dx + dy*dy) || 1;
@@ -878,7 +871,7 @@
             else if(b.owner === 2) player2.score += 20;
             else player1.score += 15;
             document.getElementById("score1").textContent = player1.score;
-            if(isTwoPlayers) document.getElementById("score2").textContent = player2.score;
+            if(gameMode !== "solo") document.getElementById("score2").textContent = player2.score;
             killed = true; break;
           }
         }
@@ -925,7 +918,7 @@
             hitPlayer(player1, "lives1"); enemyBullets.splice(i, 1); hit = true;
           }
         }
-        if(!hit && isTwoPlayers && player2.alive){
+        if(!hit && gameMode !== "solo" && player2.alive){
           const hitH = player2.crouching ? 40 : 55;
           if(b.x > player2.x && b.x < player2.x + 30 && b.y > player2.y && b.y < player2.y + hitH){
             hitPlayer(player2, "lives2"); enemyBullets.splice(i, 1); hit = true;
@@ -953,15 +946,15 @@
     }
 
     function gameOver(){
-      const maxScore = isTwoPlayers ? Math.max(player1.score, player2.score) : player1.score;
+      const maxScore = gameMode !== "solo" ? Math.max(player1.score, player2.score) : player1.score;
       if (maxScore > highScore) {
         highScore = maxScore;
-        highScoreHolder = (isTwoPlayers && player2.score > player1.score) ? player2.name : player1.name;
+        highScoreHolder = (gameMode !== "solo" && player2.score > player1.score) ? player2.name : player1.name;
         saveHighScore();
         updateHighScoreDisplay();
       }
       let msg = "Game Over !\nVague atteinte : " + wave + "\n\n" + player1.name + " (Bleu): " + player1.score;
-      if(isTwoPlayers) msg += "\n" + player2.name + " (Vert): " + player2.score;
+      if(gameMode !== "solo") msg += "\n" + player2.name + " (Vert): " + player2.score;
       msg += "\n\n🏆 RECORD : " + highScore + " par " + highScoreHolder;
       alert(msg);
       location.reload();
